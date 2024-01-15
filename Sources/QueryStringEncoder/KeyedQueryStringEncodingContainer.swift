@@ -78,10 +78,11 @@ struct KeyedQueryStringEncodingContainer<Key>: KeyedEncodingContainerProtocol wh
     }
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
-        if T.self == Date.self {
+        switch T.self {
+        case is Date.Type:
             let string = iso8601DateFormatter.string(from: value as! Date)
             try encode(string, forKey: key)
-        } else {
+        default:
             let encoder = QueryParametersEncoder(to: container, codingPath: codingPath + [key])
             try value.encode(to: encoder)
         }
